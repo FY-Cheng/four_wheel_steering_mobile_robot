@@ -1,1 +1,0 @@
-This project focuses on the planning and control of a four-wheel steering mobile robot, including kinematics solving and Webots simulation. Path planning and motion control of the robot are implemented based on ROS 2.

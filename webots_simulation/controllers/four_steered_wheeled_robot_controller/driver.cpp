@@ -243,8 +243,6 @@ void FourSteeredWheeledRobot::inverseKinematics(double Vx, double Vy, double Ome
         std::atan2((Vy - hw), (Vx + hw))
     };
 
-    std::cout<<std::endl<<target_steer[0];
-
     target_drive = {
         std::sqrt(std::pow(Vx - hw, 2) + std::pow(hw + Vy, 2)) / WHEEL_RADIUS,
         std::sqrt(std::pow(Vx + hw, 2) + std::pow(hw + Vy, 2)) / WHEEL_RADIUS,
