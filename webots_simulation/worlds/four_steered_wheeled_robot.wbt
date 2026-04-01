@@ -1,0 +1,295 @@
+#VRML_SIM R2025a utf8
+
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/backgrounds/protos/TexturedBackground.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/backgrounds/protos/TexturedBackgroundLight.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/floors/protos/RectangleArena.proto"
+
+WorldInfo {
+}
+Viewpoint {
+  orientation 0.3950204849004269 -0.3219328727138932 -0.8604173649893474 4.364675324193281
+  position 0.3608012875475803 -1.0476151119147035 1.6167761407584604
+}
+TexturedBackground {
+}
+TexturedBackgroundLight {
+}
+RectangleArena {
+  floorSize 10 10
+}
+Robot {
+  translation -0.09252015372666944 -0.03238317395175042 0.04636713015738159
+  rotation 0.0002357442160047758 -0.00026367410633870844 0.999999937450313 1.9459297807507094
+  children [
+    Pose {
+      children [
+        Shape {
+          appearance PBRAppearance {
+            baseColor 0.239216 0.219608 0.27451
+            transparency 0.4
+          }
+          geometry DEF body_size Box {
+            size 0.5 0.5 0.05
+          }
+        }
+      ]
+    }
+    Pose {
+      translation 0.2 0 0
+      children [
+        Shape {
+          appearance PBRAppearance {
+            baseColor 0.878431 0.105882 0.141176
+            emissiveColor 0.878431 0.105882 0.141176
+          }
+          geometry Sphere {
+            radius 0.04
+          }
+        }
+      ]
+    }
+    Group {
+      children [
+        Solid {
+          translation 0 0 -0.05
+          children [
+            Pen {
+            }
+          ]
+        }
+        GPS {
+        }
+        InertialUnit {
+        }
+      ]
+    }
+    Group {
+      children [
+        DEF steer Solid {
+          translation 0.175 0.175 0
+          children [
+            Hinge2Joint {
+              jointParameters HingeJointParameters {
+                position 3.140855321193433
+                axis 0 0 1
+              }
+              jointParameters2 JointParameters {
+                position 375.061372204718
+                axis 0 1 0
+              }
+              device [
+                RotationalMotor {
+                  name "steer_fl"
+                  maxVelocity 100
+                }
+                PositionSensor {
+                  name "steer_fl_sensor"
+                }
+              ]
+              device2 [
+                PositionSensor {
+                  name "drive_fl_sensor"
+                }
+                RotationalMotor {
+                  name "drive_fl"
+                  maxVelocity 100
+                }
+              ]
+              endPoint Solid {
+                translation 0.00022895389653827637 8.3273447426558e-09 -8.590633523696831e-05
+                rotation 0.7143503832232554 0.4945625393903513 0.4950872899000293 4.381697530456298
+                children [
+                  Shape {
+                    appearance PBRAppearance {
+                      baseColor 0.870588 0.866667 0.854902
+                    }
+                    geometry DEF wheel_size Cylinder {
+                      height 0.05
+                      radius 0.05
+                    }
+                  }
+                ]
+                boundingObject USE wheel_size
+                physics Physics {
+                }
+                linearVelocity 9.369728688279065e-12 -5.446363976684702e-10 2.8797953557455574e-12
+                angularVelocity 8.672929678681066e-08 3.408692881203922e-08 1.1017718276122649e-09
+              }
+            }
+          ]
+          name "steer1"
+          physics Physics {
+          }
+        }
+        DEF steer Solid {
+          translation -0.175 0.175 0
+          children [
+            Hinge2Joint {
+              jointParameters HingeJointParameters {
+                position 3.1371828638276944
+                axis 0 0 1
+              }
+              jointParameters2 JointParameters {
+                position 239.4972758241151
+                axis 0 1 0
+              }
+              device [
+                RotationalMotor {
+                  name "steer_rl"
+                }
+                PositionSensor {
+                  name "steer_rl_sensor"
+                }
+              ]
+              device2 [
+                PositionSensor {
+                  name "drive_rl_sensor"
+                }
+                RotationalMotor {
+                  name "drive_rl"
+                  maxVelocity 100
+                }
+              ]
+              endPoint Solid {
+                translation -0.00016421015502295563 9.014425203346858e-07 0.0001812013846093724
+                rotation -0.26171851140429714 0.6830414388027014 0.6818781516272936 2.624007673364931
+                children [
+                  Shape {
+                    appearance PBRAppearance {
+                    }
+                    geometry DEF wheel_size Cylinder {
+                      height 0.05
+                      radius 0.05
+                    }
+                  }
+                ]
+                boundingObject USE wheel_size
+                physics Physics {
+                }
+                linearVelocity 3.6914209699697753e-10 -3.988232853613224e-10 -2.9178781501471758e-12
+                angularVelocity -6.099205279108649e-08 -2.3698964370827862e-08 1.1017448309034504e-09
+              }
+            }
+          ]
+          name "steer2"
+          physics Physics {
+          }
+        }
+        DEF steer Solid {
+          translation -0.175 -0.175 0
+          children [
+            Hinge2Joint {
+              jointParameters HingeJointParameters {
+                position 3.137188416280249
+                axis 0 0 1
+              }
+              jointParameters2 JointParameters {
+                position 240.052253131032
+                axis 0 1 0
+              }
+              device [
+                RotationalMotor {
+                  name "steer_rr"
+                }
+                PositionSensor {
+                  name "steer_rr_sensor"
+                }
+              ]
+              device2 [
+                PositionSensor {
+                  name "drive_rr_sensor"
+                }
+                RotationalMotor {
+                  name "drive_rr"
+                  maxVelocity 100
+                }
+              ]
+              endPoint Solid {
+                translation -0.00021699898349463663 1.1133581076131997e-06 6.229706795404859e-05
+                rotation -0.4690520509766793 0.6255321001886515 0.6234579096524043 2.2599173752132837
+                children [
+                  Shape {
+                    appearance PBRAppearance {
+                    }
+                    geometry DEF wheel_size Cylinder {
+                      height 0.05
+                      radius 0.05
+                    }
+                  }
+                ]
+                boundingObject USE wheel_size
+                physics Physics {
+                }
+                linearVelocity 2.2944922455992573e-10 -4.399158994437556e-11 2.629666443786319e-12
+                angularVelocity -8.232298676851963e-08 -3.1990690391906705e-08 1.1018266743588294e-09
+              }
+            }
+          ]
+          name "steer3"
+          physics Physics {
+          }
+        }
+        DEF steer Solid {
+          translation 0.175 -0.175 0
+          children [
+            Hinge2Joint {
+              jointParameters HingeJointParameters {
+                position 3.1371881876798993
+                axis 0 0 1
+              }
+              jointParameters2 JointParameters {
+                position 375.1185819151418
+                axis 0 1 0
+              }
+              device [
+                RotationalMotor {
+                  name "steer_fr"
+                }
+                PositionSensor {
+                  name "steer_fr_sensor"
+                }
+              ]
+              device2 [
+                PositionSensor {
+                  name "drive_fr_sensor"
+                }
+                RotationalMotor {
+                  name "drive_fr"
+                  maxVelocity 100
+                }
+              ]
+              endPoint Solid {
+                translation 0.00021556520431877948 -7.919802135027927e-07 -6.709538055554833e-05
+                rotation 0.6933559176370664 0.5080120152776609 0.5110590609814007 4.351067535588863
+                children [
+                  Shape {
+                    appearance PBRAppearance {
+                    }
+                    geometry DEF wheel_size Cylinder {
+                      height 0.05
+                      radius 0.05
+                    }
+                  }
+                ]
+                boundingObject USE wheel_size
+                physics Physics {
+                }
+                linearVelocity -1.31827826004201e-10 -1.8596838353530071e-10 -2.59178528596613e-12
+                angularVelocity 8.006906887905063e-08 3.113147115152407e-08 1.1018035633529437e-09
+              }
+            }
+          ]
+          name "steer4"
+          physics Physics {
+          }
+        }
+      ]
+    }
+  ]
+  boundingObject USE body_size
+  physics Physics {
+  }
+  controller "four_steered_wheeled_robot_controller"
+  linearVelocity 1.218718752380645e-10 -3.005897714171046e-10 -1.7445982490299326e-11
+  angularVelocity -1.5324423546938344e-11 2.4426935081947636e-12 1.1077096507636023e-09
+}
