@@ -43,7 +43,9 @@ public:
 
     void updateRobotStates();
 
-    void setWheelCommands(const std::array<double, 4>& target_steer, const std::array<double, 4>& target_drive);
+    bool isSteerAlign(const std::array<double, 4>& target_steer);
+
+    void setWheelCommands(std::array<double, 4> target_steer, std::array<double, 4> target_drive);
 
     void stop();
     
@@ -51,21 +53,18 @@ public:
 
     void crabWalk(double direction, double linear_vel);
 
-    void keyboardInit();
-    
-    void keyboardControl();
-
-    bool isSteerAlign(const std::array<double, 4>& target_steer);
-
     void inverseKinematics(double Vx, double Vy, double Omega, 
         std::array<double, 4>& targer_steer, std::array<double, 4>& targer_drive);  // calculate target_steer_angle and targer_drive_angular_vel by input target Vx,Vy,Omega
 
     void dualAckermanWalk(double Vx, double Vy, double Omega); // 双阿克曼结构
 
-    void ackermanWalk(double V, double Omega); // 传统阿克曼结构，
+    void ackermanWalk(double V, double Omega); // 传统阿克曼结构
+
+    void keyboardInit();
+    
+    void keyboardControl();
 
 
-    static inline bool isArrayEqual(const std::array<double, 4>& a, const std::array<double, 4>& b, double tolerance = 0.01);
 
     static constexpr double CHASSIS_HALF_WIDTH = 0.175;
     static constexpr double WHEEL_RADIUS = 0.05;
@@ -108,15 +107,6 @@ private:
         std::array<double, 4> steer_angles{};
         std::array<double, 4> drive_speeds{};
     } robot_states_;
-
-    enum KeyboardMode {
-        STOP,
-        SPIN,
-        CARBWALK,
-        ACKERMANWALK
-    };
-    KeyboardMode cur_keyboard_mode = STOP;
-
     
 
 };

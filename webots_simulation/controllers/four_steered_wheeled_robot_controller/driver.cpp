@@ -16,7 +16,7 @@ void FourSteeredWheeledRobot::initRobot() {
     // init four steer and drive motors and position_sensors
     for (size_t i = 0; i < 4; ++i) {
         steer_motors_[i] = robot_->getMotor(STEER_MOTORS[i]);
-        steer_motors_[i]->setPosition(INFINITY);
+        steer_motors_[i]->setPosition(0.0);
         
         steer_sensors_[i] = robot_->getPositionSensor(STEER_SENSORS[i]);
         steer_sensors_[i]->enable(timestep_);
@@ -60,50 +60,11 @@ void FourSteeredWheeledRobot::updateRobotStates() {
     robot_states_.pitch = rpy[2];
     robot_states_.yaw = rpy[2];
     
-    //update steer and drive
+    // update steer and drive
     for (size_t i = 0; i < 4; ++i) {
         robot_states_.steer_angles[i] = steer_sensors_[i]->getValue();
         robot_states_.drive_speeds[i] = drive_motors_[i]->getVelocity();
     }
-}
-
-
-void FourSteeredWheeledRobot::setWheelCommands(const std::array<double, 4>& target_steer, const std::array<double, 4>& target_drive) {
-    for (size_t i = 0; i < 4; ++i) {
-        steer_motors_[i]->setPosition(target_steer[i]);
-        drive_motors_[i]->setVelocity(target_drive[i]);
-    }
-}
-
-
-void FourSteeredWheeledRobot::stop() {
-    std::array<double, 4> target_drive;
-    target_drive.fill(0);
-    setWheelCommands(robot_states_.steer_angles, target_drive);
-}
-
-
-void FourSteeredWheeledRobot::spin(double body_angular_vel) {
-    // constexpr std::array<double, 4> steer_angles = {
-    //     -M_PI / 4.0,
-    //     M_PI / 4.0,
-    //     M_PI / 4.0,
-    //     -M_PI / 4.0
-    // };
-    
-    // double R = std::sqrt(2) * CHASSIS_HALF_WIDTH;
-    // double wheel_linear_vel = body_angular_vel * R;
-    // double wheel_angular_vel = wheel_linear_vel / WHEEL_RADIUS;
-
-    // std::array<double, 4> drive_speeds = {
-    //     wheel_angular_vel, -wheel_angular_vel,
-    //     wheel_angular_vel, -wheel_angular_vel
-    // };
-
-    // setWheelCommands(steer_angles, drive_speeds);
-
-
-    dualAckermanWalk(0, 0, body_angular_vel);
 }
 
 
@@ -116,19 +77,81 @@ bool FourSteeredWheeledRobot::isSteerAlign(const std::array<double, 4>& target_s
 }
 
 
+void FourSteeredWheeledRobot::setWheelCommands(std::array<double, 4> target_steer, std::array<double, 4> target_drive) {
+    // 这里将舵轮角度限制到[-pi/2, pi/2]范围内，防止舵轮需要大角度旋转
+    for (size_t i = 0; i < 4; ++i) {
+        if (target_steer[i] > M_PI / 2.0) {
+            target_steer[i] -= M_PI;
+            target_drive[i] *= -1.0;
+        } else if (target_steer[i] <= -M_PI / 2.0) {
+            target_steer[i] += M_PI;
+            target_drive[i] *= -1.0;
+        }
+    }
+
+    bool steering_align_done = isSteerAlign(target_steer);
+
+    for (size_t i = 0; i < 4; ++i) {
+        steer_motors_[i]->setPosition(target_steer[i]);
+        drive_motors_[i]->setVelocity(steering_align_done ? target_drive[i] : 0.0);
+    }
+}
+
+
+void FourSteeredWheeledRobot::stop() {
+    std::array<double, 4> target_drive;
+    target_drive.fill(0);
+    setWheelCommands(robot_states_.steer_angles, target_drive);
+}
+
+
+void FourSteeredWheeledRobot::spin(double body_angular_vel) {
+    dualAckermanWalk(0, 0, body_angular_vel);
+}
+
+
 void FourSteeredWheeledRobot::crabWalk(double direction, double linear_vel) {
     std::array<double, 4> steer_angles, drive_speeds;
     steer_angles.fill(direction);
-
-    if (!isSteerAlign(steer_angles)) {
-        drive_speeds.fill(0);
-        setWheelCommands(steer_angles, drive_speeds);
-        return;
-    }
-
-    const double wheel_vel = linear_vel / WHEEL_RADIUS;
-    drive_speeds.fill(wheel_vel);
+    drive_speeds.fill(linear_vel / WHEEL_RADIUS);
     setWheelCommands(steer_angles, drive_speeds);
+}
+
+
+void FourSteeredWheeledRobot::inverseKinematics(double Vx, double Vy, double Omega, 
+    std::array<double, 4>& target_steer, std::array<double, 4>& target_drive) {
+    double h = CHASSIS_HALF_WIDTH;
+    double hw = h * Omega;
+
+    target_steer = {
+        std::atan2((Vy + hw), (Vx - hw)),
+        std::atan2((Vy + hw), (Vx + hw)),
+        std::atan2((Vy - hw), (Vx - hw)),
+        std::atan2((Vy - hw), (Vx + hw))
+    };
+
+    target_drive = {
+        std::sqrt(std::pow(Vx - hw, 2) + std::pow(hw + Vy, 2)) / WHEEL_RADIUS,
+        std::sqrt(std::pow(Vx + hw, 2) + std::pow(hw + Vy, 2)) / WHEEL_RADIUS,
+        std::sqrt(std::pow(Vx - hw, 2) + std::pow(hw - Vy, 2)) / WHEEL_RADIUS,
+        std::sqrt(std::pow(Vx + hw, 2) + std::pow(hw - Vy, 2)) / WHEEL_RADIUS
+    };
+}
+
+
+void FourSteeredWheeledRobot::dualAckermanWalk(double Vx, double Vy, double Omega) {
+    std::array<double, 4> target_steer, target_drive;
+    inverseKinematics(Vx, Vy, Omega, target_steer, target_drive);
+    setWheelCommands(target_steer, target_drive);
+}
+
+
+void FourSteeredWheeledRobot::ackermanWalk(double V, double Omega) {
+    std::array<double, 4> target_steer, target_drive;
+    double Vy = CHASSIS_HALF_WIDTH * Omega;
+    double Vx = sign(V) * std::sqrt(std::pow(V, 2) - std::pow(Vy, 2));
+    inverseKinematics(Vx, Vy, Omega, target_steer, target_drive);
+    setWheelCommands(target_steer, target_drive);
 }
 
 
@@ -221,48 +244,3 @@ void FourSteeredWheeledRobot::keyboardControl() {
     }
 }
 
-
-inline bool FourSteeredWheeledRobot::isArrayEqual(const std::array<double, 4>& a, const std::array<double, 4>& b, double tolerance) {
-    for (int i = 0; i < 4; ++i) {
-        if (std::fabs(a[i] - b[i]) > tolerance) {
-            return false;
-        }
-    }
-    return true;
-}
-
-
-void FourSteeredWheeledRobot::inverseKinematics(double Vx, double Vy, double Omega, 
-    std::array<double, 4>& target_steer, std::array<double, 4>& target_drive) {
-    double h = CHASSIS_HALF_WIDTH;
-    double hw = h * Omega;
-
-    target_steer = {
-        std::atan2((Vy + hw), (Vx - hw)),
-        std::atan2((Vy + hw), (Vx + hw)),
-        std::atan2((Vy - hw), (Vx - hw)),
-        std::atan2((Vy - hw), (Vx + hw))
-    };
-
-    target_drive = {
-        std::sqrt(std::pow(Vx - hw, 2) + std::pow(hw + Vy, 2)) / WHEEL_RADIUS,
-        std::sqrt(std::pow(Vx + hw, 2) + std::pow(hw + Vy, 2)) / WHEEL_RADIUS,
-        std::sqrt(std::pow(Vx - hw, 2) + std::pow(hw - Vy, 2)) / WHEEL_RADIUS,
-        std::sqrt(std::pow(Vx + hw, 2) + std::pow(hw - Vy, 2)) / WHEEL_RADIUS
-    };
-}
-
-
-void FourSteeredWheeledRobot::dualAckermanWalk(double Vx, double Vy, double Omega) {
-    std::array<double, 4> target_steer, target_drive;
-    inverseKinematics(Vx, Vy, Omega, target_steer, target_drive);
-    setWheelCommands(target_steer, target_drive);
-}
-
-void FourSteeredWheeledRobot::ackermanWalk(double V, double Omega) {
-    std::array<double, 4> target_steer, target_drive;
-    double Vy = CHASSIS_HALF_WIDTH * Omega;
-    double Vx = sign(V) * std::sqrt(std::pow(V, 2) - std::pow(Vy, 2));
-    inverseKinematics(Vx, Vy, Omega, target_steer, target_drive);
-    setWheelCommands(target_steer, target_drive);
-}
