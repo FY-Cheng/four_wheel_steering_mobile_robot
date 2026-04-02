@@ -103,7 +103,7 @@ void FourSteeredWheeledRobot::spin(double body_angular_vel) {
     // setWheelCommands(steer_angles, drive_speeds);
 
 
-    ackermanWalk(0, 0, body_angular_vel);
+    dualAckermanWalk(0, 0, body_angular_vel);
 }
 
 
@@ -203,7 +203,8 @@ void FourSteeredWheeledRobot::keyboardControl() {
         if (l) Omega = -2;  // 右转向
 
         // 阿克曼弧形移动
-        ackermanWalk(Vx / 2, 0, Omega);
+        // dualAckermanWalk(Vx / 2, 0, Omega);
+        ackermanWalk(Vx, Omega);
         return;
     }
 
@@ -252,8 +253,16 @@ void FourSteeredWheeledRobot::inverseKinematics(double Vx, double Vy, double Ome
 }
 
 
-void FourSteeredWheeledRobot::ackermanWalk(double Vx, double Vy, double Omega) {
+void FourSteeredWheeledRobot::dualAckermanWalk(double Vx, double Vy, double Omega) {
     std::array<double, 4> target_steer, target_drive;
+    inverseKinematics(Vx, Vy, Omega, target_steer, target_drive);
+    setWheelCommands(target_steer, target_drive);
+}
+
+void FourSteeredWheeledRobot::ackermanWalk(double V, double Omega) {
+    std::array<double, 4> target_steer, target_drive;
+    double Vy = CHASSIS_HALF_WIDTH * Omega;
+    double Vx = sign(V) * std::sqrt(std::pow(V, 2) - std::pow(Vy, 2));
     inverseKinematics(Vx, Vy, Omega, target_steer, target_drive);
     setWheelCommands(target_steer, target_drive);
 }
