@@ -1,0 +1,300 @@
+#VRML_SIM R2025a utf8
+
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/backgrounds/protos/TexturedBackground.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/backgrounds/protos/TexturedBackgroundLight.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/floors/protos/RectangleArena.proto"
+
+WorldInfo {
+}
+Viewpoint {
+  orientation 0.5935948347726925 -0.43626835785177576 -0.6762507612332092 4.06410484534057
+  position 0.01912814518844788 -0.1891241694775616 1.2319788198977766
+}
+TexturedBackground {
+}
+TexturedBackgroundLight {
+}
+RectangleArena {
+  floorSize 10 10
+}
+Robot {
+  translation -0.09252015372666944 -0.03238317395175042 0.04636713015738159
+  rotation 0.0002357442160047758 -0.00026367410633870844 0.999999937450313 1.9459297807507094
+  children [
+    Pen {
+    }
+    GPS {
+    }
+    InertialUnit {
+    }
+    Pose {
+      children [
+        Shape {
+          appearance PBRAppearance {
+            baseColor 0.239216 0.219608 0.27451
+            transparency 0.4
+          }
+          geometry DEF body_size Box {
+            size 0.5 0.5 0.05
+          }
+        }
+      ]
+    }
+    Pose {
+      translation 0.2 0 0
+      children [
+        Shape {
+          appearance PBRAppearance {
+            baseColor 0.878431 0.105882 0.141176
+            emissiveColor 0.878431 0.105882 0.141176
+          }
+          geometry Sphere {
+            radius 0.04
+          }
+        }
+      ]
+    }
+    DEF steer_fl_wheel HingeJoint {
+      jointParameters HingeJointParameters {
+        axis 0 0 1
+        anchor 0.175 0.175 0
+      }
+      device [
+        RotationalMotor {
+          name "steer_fl"
+        }
+        PositionSensor {
+          name "steer_fl_sensor"
+        }
+      ]
+      endPoint Solid {
+        translation 0.175 0.175 0
+        children [
+          DEF drive_fl_wheel HingeJoint {
+            jointParameters HingeJointParameters {
+              position 1
+              axis 0 1 0
+            }
+            device [
+              RotationalMotor {
+                name "drive_fl"
+                maxVelocity 40
+              }
+              PositionSensor {
+                name "drive_fl_sensor"
+              }
+            ]
+            endPoint Solid {
+              rotation 0.36034342361955835 0.6596020844238941 0.6596042050182743 3.833306890182513
+              children [
+                DEF WHEEL_SHAPE Shape {
+                  appearance Appearance {
+                    material Material {
+                      diffuseColor 0.368627 0.360784 0.392157
+                      specularColor 0.239216 0.219608 0.27451
+                    }
+                  }
+                  geometry Cylinder {
+                    height 0.05
+                    radius 0.05
+                  }
+                }
+              ]
+              boundingObject USE WHEEL_SHAPE
+              physics Physics {
+              }
+            }
+          }
+        ]
+        name "solid(1)"
+        boundingObject Box {
+          size 0.1 0.05 0.02
+        }
+        physics Physics {
+        }
+      }
+    }
+    DEF steer_fr_wheel HingeJoint {
+      jointParameters HingeJointParameters {
+        axis 0 0 1
+        anchor 0.175 -0.175 0
+      }
+      device [
+        RotationalMotor {
+          name "steer_fr"
+        }
+        PositionSensor {
+          name "steer_fr_sensor"
+        }
+      ]
+      endPoint Solid {
+        translation 0.175 -0.175 0
+        children [
+          DEF drive_fr_wheel HingeJoint {
+            jointParameters HingeJointParameters {
+              axis 0 1 0
+            }
+            device [
+              RotationalMotor {
+                name "drive_fr"
+                maxVelocity 40
+              }
+              PositionSensor {
+                name "drive_fr_sensor"
+              }
+            ]
+            endPoint Solid {
+              rotation 3.3905113482557537e-09 0.70710528118436 0.707108281185553 3.14159
+              children [
+                DEF WHEEL_SHAPE Shape {
+                  appearance Appearance {
+                    material Material {
+                      diffuseColor 0.368627 0.360784 0.392157
+                      specularColor 0.239216 0.219608 0.27451
+                    }
+                  }
+                  geometry Cylinder {
+                    height 0.05
+                    radius 0.05
+                  }
+                }
+              ]
+              boundingObject USE WHEEL_SHAPE
+              physics Physics {
+              }
+            }
+          }
+        ]
+        name "solid(2)"
+        boundingObject Box {
+          size 0.1 0.05 0.02
+        }
+        physics Physics {
+        }
+      }
+    }
+    DEF steer_rl_wheel HingeJoint {
+      jointParameters HingeJointParameters {
+        axis 0 0 1
+        anchor -0.175 0.175 0
+      }
+      device [
+        RotationalMotor {
+          name "steer_rl"
+        }
+        PositionSensor {
+          name "steer_rl_sensor"
+        }
+      ]
+      endPoint Solid {
+        translation -0.175 0.175 0
+        children [
+          DEF drive_rl_wheel HingeJoint {
+            jointParameters HingeJointParameters {
+              axis 0 1 0
+            }
+            device [
+              RotationalMotor {
+                name "drive_rl"
+                maxVelocity 40
+              }
+              PositionSensor {
+                name "drive_rl_sensor"
+              }
+            ]
+            endPoint Solid {
+              rotation 3.3905113482557537e-09 0.70710528118436 0.707108281185553 3.14159
+              children [
+                DEF WHEEL_SHAPE Shape {
+                  appearance Appearance {
+                    material Material {
+                      diffuseColor 0.368627 0.360784 0.392157
+                      specularColor 0.239216 0.219608 0.27451
+                    }
+                  }
+                  geometry Cylinder {
+                    height 0.05
+                    radius 0.05
+                  }
+                }
+              ]
+              boundingObject USE WHEEL_SHAPE
+              physics Physics {
+              }
+            }
+          }
+        ]
+        name "solid(3)"
+        boundingObject Box {
+          size 0.1 0.05 0.02
+        }
+        physics Physics {
+        }
+      }
+    }
+    DEF steer_rr_wheel HingeJoint {
+      jointParameters HingeJointParameters {
+        axis 0 0 1
+        anchor -0.175 -0.175 0
+      }
+      device [
+        RotationalMotor {
+          name "steer_rr"
+        }
+        PositionSensor {
+          name "steer_rr_sensor"
+        }
+      ]
+      endPoint Solid {
+        translation -0.175 -0.175 0
+        children [
+          DEF drive_rr_wheel HingeJoint {
+            jointParameters HingeJointParameters {
+              axis 0 1 0
+            }
+            device [
+              RotationalMotor {
+                name "drive_rr"
+                maxVelocity 40
+              }
+              PositionSensor {
+                name "drive_rr_sensor"
+              }
+            ]
+            endPoint Solid {
+              rotation 3.3905113482557537e-09 0.70710528118436 0.707108281185553 3.14159
+              children [
+                DEF WHEEL_SHAPE Shape {
+                  appearance Appearance {
+                    material Material {
+                      diffuseColor 0.368627 0.360784 0.392157
+                      specularColor 0.239216 0.219608 0.27451
+                    }
+                  }
+                  geometry Cylinder {
+                    height 0.05
+                    radius 0.05
+                  }
+                }
+              ]
+              boundingObject USE WHEEL_SHAPE
+              physics Physics {
+              }
+            }
+          }
+        ]
+        name "solid(4)"
+        boundingObject Box {
+          size 0.1 0.05 0.02
+        }
+        physics Physics {
+        }
+      }
+    }
+  ]
+  name "four_wheel_steering_robot"
+  boundingObject USE body_size
+  physics Physics {
+  }
+  controller "four_steered_wheeled_robot_controller"
+}
